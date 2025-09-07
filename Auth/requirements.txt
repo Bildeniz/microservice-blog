@@ -1,0 +1,6 @@
+peewee==3.17.8
+fastapi==0.115.14
+python-jose==3.5.0
+pydantic==2.11.7
+passlib==1.7.4
+requests==2.32.3

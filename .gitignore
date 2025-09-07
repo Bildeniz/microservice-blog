@@ -1,0 +1,7 @@
+**/private_key.pem
+**/public_key.pem
+**/*.sqlite
+**/communication_key
+**/__pycache__
+.venv
+.idea
