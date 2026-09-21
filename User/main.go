@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"User/db"
+
 	"github.com/joho/godotenv"
 )
 
@@ -13,4 +15,5 @@ func main() {
 		log.Fatal("error loading .env files")
 	}
 
+	db.Connect()
 }
