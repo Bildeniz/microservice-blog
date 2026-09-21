@@ -12,7 +12,7 @@ services:
       - user-service-network
 
   user-db:
-    image: postgres:18-alpine
+    image: postgres:18
     container_name: blog_user_db
     env_file:
       - ./User/.env
@@ -20,6 +20,9 @@ services:
       - user-db-data:/var/lib/postgresql
     networks:
       - user-service-network
+
+    ports:
+      - 5432:5432
 
 
 volumes:

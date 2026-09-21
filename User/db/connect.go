@@ -10,7 +10,7 @@ import (
 )
 
 func Connect() *gorm.DB {
-	dsn := fmt.Sprintf("host=user-db user=%s password=%s dbname=%s port=5432 TimeZone=Europe/Turkey",
+	dsn := fmt.Sprintf("host=user-db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Europe/Istanbul",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"))

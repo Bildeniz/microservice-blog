@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -16,6 +17,9 @@ func main() {
 		log.Fatal("error loading .env files")
 	}
 
-	db.Connect()
-	fmt.Println("Connection is succes!")
+	conn := db.Connect()
+	ctx := context.Background()
+
+	db.Migrate(conn, ctx)
+
 }
