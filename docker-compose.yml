@@ -1,0 +1,30 @@
+services: 
+  user-service:
+    build:
+      context: ./User 
+      dockerfile: Dockerfile
+    container_name: blog_user_service
+    env_file:
+      - ./User/.env
+    depends_on:
+      - user-db
+    networks:
+      - user-service-network
+
+  user-db:
+    image: postgres:18-alpine
+    container_name: blog_user_db
+    env_file:
+      - ./User/.env
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - user-service-network
+
+
+volumes:
+  user-db-data:
+
+networks:
+  user-service-network:
+    driver: bridge
