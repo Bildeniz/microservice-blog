@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"User/db"
@@ -16,4 +17,5 @@ func main() {
 	}
 
 	db.Connect()
+	fmt.Println("Connection is succes!")
 }
