@@ -1,4 +1,17 @@
-services: 
+services:
+  # Common RabitMQ service
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    
+    ports:
+      - 15672:15672 # TODO: before production delete it
+    networks:
+      - shared-event-network
+
   user-service:
     build:
       context: ./User 
@@ -14,11 +27,27 @@ services:
     ports:
       - 8080:80
 
+  user-consumer:
+
+    build:
+      context: ./User-consumer
+      dockerfile: Dockerfile
+    container_name: blog_user_consumer
+    env_file:
+      - ./User-consumer/.env
+    depends_on:
+      - user-db
+      - rabbitmq
+    networks:
+      - user-service-network
+
   user-db:
     image: postgres:18
     container_name: blog_user_db
-    env_file:
-      - ./User/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - user-db-data:/var/lib/postgresql
     networks:
@@ -33,4 +62,6 @@ volumes:
 
 networks:
   user-service-network:
+    driver: bridge
+  shared-event-network:
     driver: bridge
