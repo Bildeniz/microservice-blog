@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: Microservice Blog User API
+  version: 0.1.0
+  description: API specification for the User service. This file written by AI
+
+servers:
+  - url: http://localhost:80
+    description: Local User service
+
+tags:
+  - name: Users
+    description: User management endpoints
+
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a user
+      operationId: createUser
+      description: Creates a new user from the JSON request body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '304':
+          description: User was not created by the service.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - surname
+        - email
+        - username
+        - password
+      properties:
+        name:
+          type: string
+          example: Ada
+        surname:
+          type: string
+          example: Lovelace
+        email:
+          type: string
+          format: email
+          example: ada@example.com
+        username:
+          type: string
+          example: ada
+        password:
+          type: string
+          format: password
+          writeOnly: true
+          example: strong-password
+
+    MessageResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Successfully Created!
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Invalid request body
