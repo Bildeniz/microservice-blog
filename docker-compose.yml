@@ -40,6 +40,7 @@ services:
       - rabbitmq
     networks:
       - user-service-network
+      - shared-event-network
 
   user-db:
     image: postgres:18
