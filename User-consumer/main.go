@@ -68,6 +68,7 @@ func main() {
 			err := json.Unmarshal([]byte(d.Body), &user)
 			if err != nil {
 				log.Print(err, "Failed to converting data to json")
+				d.Nack(false, false)
 				return
 			}
 
