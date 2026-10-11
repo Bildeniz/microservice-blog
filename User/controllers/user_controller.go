@@ -3,6 +3,7 @@ package controller
 import (
 	"User/models"
 	"User/repositories"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -46,4 +47,28 @@ func (ctrl *UserController) GetAllUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "All Users", "data": result})
+}
+
+func (ctrl *UserController) GetUser(c *gin.Context) {
+	idStr := c.Param("id")
+	var id int
+
+	_, err := fmt.Sscanf(idStr, "%d", &id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID should be an integer"})
+		return
+	}
+
+	user, rows, err := ctrl.Repo.GetUser(id)
+
+	if rows != 1 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User Not Founded"})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("There is a problem with getting data from database ", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User", "data": user})
 }

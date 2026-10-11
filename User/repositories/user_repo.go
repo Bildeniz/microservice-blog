@@ -25,3 +25,10 @@ func (userRepository *UserRepository) GetAllUsers() ([]models.User, int64, error
 
 	return users, results.RowsAffected, results.Error
 }
+
+func (userRepository *UserRepository) GetUser(id int) (models.User, int64, error) {
+	var user models.User
+	result := userRepository.DB.Find(&user, id)
+
+	return user, result.RowsAffected, result.Error
+}
