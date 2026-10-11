@@ -25,7 +25,7 @@ services:
       - user-service-network
 
     ports:
-      - 8080:80
+      - 8081:80
 
   user-consumer:
 
@@ -46,9 +46,9 @@ services:
     image: postgres:18
     container_name: blog_user_db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${USER_DB_USER}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
+      POSTGRES_DB: ${USER_DB_NAME}
     volumes:
       - user-db-data:/var/lib/postgresql
     networks:
@@ -57,12 +57,50 @@ services:
     ports:
       - 5432:5432 # TODO: before production delete it
 
+  #User Auth Service
+  user-auth:
+    build:
+      context: ./User-auth
+      dockerfile: Dockerfile
+    container_name: blog_user_auth
+    env_file:
+      - ./User-auth/.env
+    depends_on:
+      user_auth_db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    networks:
+      - user-auth-service-network
+      - shared-event-network
 
+  user_auth_db:
+    image: postgres:18
+    container_name: blog_auth_db
+    environment:
+      POSTGRES_USER: ${USER_AUTH_DB_USER}
+      POSTGRES_PASSWORD: ${USER_AUTH_DB_PASSWORD}
+      POSTGRES_DB: ${USER_AUTH_DB_NAME}
+    volumes:
+      - user-auth-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - user-auth-service-network
+    ports:
+      - 5433:5432 # TODO: before production delete it
+    
 volumes:
   user-db-data:
+  user-auth-db-data:
 
 networks:
   user-service-network:
+    driver: bridge
+  user-auth-service-network:
     driver: bridge
   shared-event-network:
     driver: bridge
